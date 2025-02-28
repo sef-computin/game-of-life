@@ -2,6 +2,8 @@
 
 This is an implementation of **Conway's Game of Life**, written in **Go** and utilizing **OpenGL** for rendering the grid and cell updates.
 
+![Alt text]("game of life.gif") / ![]("game of life.gif")
+
 ## Overview
 
 Conway's Game of Life is a cellular automaton devised by mathematician **John Conway** in 1970. The game consists of a grid of cells that evolve over time based on a few simple rules. Cells can be alive or dead, and their state is determined by the number of live neighbors they have.
