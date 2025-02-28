@@ -20,7 +20,7 @@ Conway's Game of Life is a cellular automaton devised by mathematician **John Co
 1.  **Clone the Repository**:
     
     ```bash
-    git clone https://github.com/sef-comp/game-of-life.git
+    git clone https://github.com/sef-computin/game-of-life.git
     cd game-of-life
     ```
     
