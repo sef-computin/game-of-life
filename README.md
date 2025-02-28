@@ -2,7 +2,7 @@
 
 This is an implementation of **Conway's Game of Life**, written in **Go** and utilizing **OpenGL** for rendering the grid and cell updates.
 
-![Alt text]("game of life.gif") / ![]("game of life.gif")
+![game of life](https://github.com/user-attachments/assets/a5ec00ab-4b7e-45b3-857a-089c25f21fe1)
 
 ## Overview
 
