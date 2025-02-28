@@ -28,9 +28,11 @@ type cell struct {
 	y int
 }
 
-var alive_cells []cell
+var alive_cells map[cell]interface{} = make(map[cell]interface{})
 
 var grid []int
+
+var run_state bool
 
 var framecount uint32 = 0
 
@@ -38,7 +40,8 @@ func main() {
 	runtime.LockOSThread()
 
 	grid = make([]int, GRIDX*GRIDY)
-	alive_cells = append(alive_cells, []cell{{50, 49}, {50, 50}, {51, 50}, {50, 51}, {49, 51}}...)
+	run_state = false
+	// alive_cells = append(alive_cells, []cell{{50, 49}, {50, 50}, {51, 50}, {50, 51}, {49, 51}}...)
 
 	_ = initOpenGL()
 	init_w()
@@ -75,10 +78,18 @@ func mouseClicked(btn, state, x, y int) {
 		return
 	}
 	xc, yc := x/GRIDS, y/GRIDS
-	alive_cells = append(alive_cells, cell{xc, yc})
+	c := cell{xc, yc}
+	if _, ok := alive_cells[c]; ok {
+		delete(alive_cells, c)
+	} else {
+		alive_cells[c] = true
+	}
 }
 
 func keyboardUp(key uint8, x, y int) {
+	if key == 13 {
+		run_state = !run_state
+	}
 	if key == 27 {
 		glut.DestroyWindow(glut.GetWindow())
 		os.Exit(0)
@@ -90,17 +101,20 @@ func display() {
 
 	repopulate_grid()
 	draw_grid()
-	next_generation()
+
+	if run_state {
+		next_generation()
+	} else {
+		draw_pause()
+	}
 
 	glut.SwapBuffers()
-	// println("display")
-
 }
 
 func repopulate_grid() {
 	clear_grid()
 
-	for _, cell := range alive_cells {
+	for cell := range alive_cells {
 		grid[cell.y*GRIDX+cell.x] = 1
 	}
 }
@@ -113,9 +127,8 @@ func clear_grid() {
 
 func next_generation() {
 	check_area := map[cell]int{}
-	next_gen := []cell{}
 
-	for _, cl := range alive_cells {
+	for cl := range alive_cells {
 		xleft, xright := max(cl.x-1, 0), min(cl.x+1, GRIDX-1)
 		yleft, yright := max(cl.y-1, 0), min(cl.y+1, GRIDY-1)
 
@@ -128,35 +141,21 @@ func next_generation() {
 		}
 	}
 
+	for k := range alive_cells {
+		delete(alive_cells, k)
+	}
+
 	for cl, n := range check_area {
 		if grid[cl.y*GRIDX+cl.x] == 0 {
 			if n == 3 {
-				next_gen = append(next_gen, cl)
+				alive_cells[cl] = true
 			}
 		} else if n >= 2 && n <= 3 {
-			next_gen = append(next_gen, cl)
+			alive_cells[cl] = true
 		}
 	}
 
-	alive_cells = next_gen
-}
-
-func count_neighbors(c cell) (n int) {
-	n = 0
-	xleft, xright := max(c.x-1, 0), min(c.x+1, GRIDX-1)
-	yleft, yright := max(c.y-1, 0), min(c.y+1, GRIDY-1)
-
-	for i := xleft; i <= xright; i++ {
-		for j := yleft; j <= yright; j++ {
-			if i == c.x && j == c.y {
-				continue
-			} else {
-				n += grid[j*GRIDX+i]
-			}
-		}
-	}
-
-	return
+	// alive_cells = next_gen
 }
 
 func draw_grid() {
@@ -176,6 +175,18 @@ func draw_grid() {
 			gl.Vertex2i(x0+int32(GRIDS)-1, y0+1)
 			gl.End()
 		}
+	}
+
+}
+
+func draw_pause() {
+	pause_msg := "PAUSE"
+	gl.Color3f(1.0, 0.2, 0.2)
+
+	gl.RasterPos2i(32, 32)
+	for _, c := range pause_msg {
+		glut.BitmapCharacter(glut.BITMAP_TIMES_ROMAN_24, c)
+		// glut.StrokeCharacter(glut.STROKE_MONO_ROMAN, c)
 	}
 
 }

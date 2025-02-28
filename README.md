@@ -50,5 +50,6 @@ Conway's Game of Life is a cellular automaton devised by mathematician **John Co
     ```
 ## Controls
 
--   **Mouse**: Left-click to make a cell alive.
+-   **Mouse**: Left-click to toggle cell living state.
+-   **Enter**: Pause/Unpause
 -   **Esc**: Exit the game.
