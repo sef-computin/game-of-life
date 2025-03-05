@@ -62,7 +62,7 @@ func init_w() {
 	glut.InitWindowSize(WINWIDTH, WINHEIGHT)
 	glut.CreateWindow("Conway's Game of Life")
 
-	gl.ClearColor(0.3, 0.3, 0.3, 0)
+	gl.ClearColor(0.3, 0.33, 0.33, 0)
 	gl.Ortho(0, WINWIDTH, WINHEIGHT, 0, -1, 1)
 	glut.TimerFunc(1000/FRAMESPEED, timer, 0)
 
@@ -129,13 +129,25 @@ func next_generation() {
 	check_area := map[cell]int{}
 
 	for cl := range alive_cells {
-		xleft, xright := max(cl.x-1, 0), min(cl.x+1, GRIDX-1)
-		yleft, yright := max(cl.y-1, 0), min(cl.y+1, GRIDY-1)
+		xleft, xright := cl.x-1, cl.x+1
+		yleft, yright := cl.y-1, cl.y+1
 
 		for i := xleft; i <= xright; i++ {
 			for j := yleft; j <= yright; j++ {
 				if !(i == cl.x && j == cl.y) {
-					check_area[cell{i, j}]++
+					x, y := i, j
+					if x < 0 {
+						x = GRIDX - 1
+					} else if x > GRIDX-1 {
+						x = 0
+					}
+					if y < 0 {
+						y = GRIDY - 1
+					} else if y > GRIDY-1 {
+						y = 0
+					}
+
+					check_area[cell{x, y}]++
 				}
 			}
 		}
@@ -186,7 +198,6 @@ func draw_pause() {
 	gl.RasterPos2i(32, 32)
 	for _, c := range pause_msg {
 		glut.BitmapCharacter(glut.BITMAP_TIMES_ROMAN_24, c)
-		// glut.StrokeCharacter(glut.STROKE_MONO_ROMAN, c)
 	}
 
 }
