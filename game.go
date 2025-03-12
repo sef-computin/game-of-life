@@ -28,7 +28,7 @@ type cell struct {
 	y int
 }
 
-var alive_cells map[cell]interface{} = make(map[cell]interface{})
+var alive_cells map[cell]any = make(map[cell]any)
 
 var grid []int
 
